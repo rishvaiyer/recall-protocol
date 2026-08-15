@@ -26,9 +26,9 @@ Open `http://localhost:4319`. Click **Run recall sequence** to see the incident,
 
 ## CockroachDB path
 
-`schema.sql` is the durable CockroachDB-compatible model. It uses `STRING`, `UUID`, `TIMESTAMPTZ`, `JSONB`, foreign keys, and indexes that are supported by CockroachDB. The server advertises `cockroach-compatible-adapter-ready` when `COCKROACHDB_URL` or `DATABASE_URL` exists, but this lightweight demo deliberately does not require a driver or cluster secret. Local and Railway-without-a-secret use `memory-fallback (no cluster secret)`.
+`schema.sql` is the durable CockroachDB-compatible model. It uses `STRING`, `UUID`, `TIMESTAMPTZ`, `JSONB`, foreign keys, and indexes that are supported by CockroachDB. When `COCKROACHDB_URL` or `DATABASE_URL` is present, `src/cockroach.js` initializes the durable tables and routes claim/idempotency and audit operations through `pg`.
 
-The production adapter should wrap claim creation and idempotency insertion in one serializable transaction, enforce `task_id` and idempotency uniqueness at the database layer, and read events with an explicit `ORDER BY occurred_at DESC, id`.
+The adapter wraps claim creation and idempotency insertion in a serializable transaction, enforces `task_id` and idempotency uniqueness at the database layer, retries bounded `40001` serialization failures, recovers concurrent idempotency races, and reads events with an explicit `ORDER BY occurred_at DESC, id`. Local and the current public Railway demo use the clearly labeled `memory-fallback (no cluster secret)` because no paid CockroachDB resource was provisioned.
 
 ## API
 
@@ -43,7 +43,7 @@ The production adapter should wrap claim creation and idempotency insertion in o
 
 ## Deployment
 
-The app is designed for a free/dev Railway service with no database provisioned. Set `PORT` only; do not add secrets for the synthetic demo. A real CockroachDB deployment needs an explicit secret and the adapter implementation described above.
+The app is designed for a free/dev Railway service. Set `PORT` only for the synthetic fallback. To exercise durable claims against a user-owned free/dev CockroachDB cluster, set its sealed connection string as `COCKROACHDB_URL`; never put it in the browser or repository.
 
 ## Boundaries
 
