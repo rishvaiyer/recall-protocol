@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { createStore } from '../src/store.js';
 import { clampPosition, createGraphModel, getNodeDetail, nodeMatchesFilter, nudgePosition } from '../public/graph-model.js';
+
+test('decorative stage grid cannot intercept pointer input', async () => {
+  const styles = await readFile(new URL('../public/styles.css', import.meta.url), 'utf8');
+  assert.match(styles, /\.network-stage:before\{pointer-events:none\}/);
+});
 
 test('graph positions stay inside the touch-safe canvas and keyboard nudges are bounded', () => {
   assert.deepEqual(clampPosition({ x: -20, y: 999 }), { x: 70, y: 500 });
