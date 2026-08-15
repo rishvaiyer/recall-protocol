@@ -30,7 +30,8 @@ const readJson = (req) => new Promise((resolve, reject) => {
 const routes = {
   '/': 'index.html',
   '/styles.css': 'styles.css',
-  '/app.js': 'app.js'
+  '/app.js': 'app.js',
+  '/graph-model.js': 'graph-model.js'
 };
 
 const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8' };

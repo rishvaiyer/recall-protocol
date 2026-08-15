@@ -3,28 +3,45 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Recall Protocol — living incident memory</title>
+    <title>Recall Protocol — trace the living ledger</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <main class="shell">
       <header class="topbar">
-        <div class="brand"><span class="brand-mark">↗</span><div><p class="eyebrow">RECALL PROTOCOL / SYNTHETIC CONTROL PLANE</p><h1>Moonfire Lantern recall</h1></div></div>
+        <a class="brand" href="/" aria-label="Recall Protocol home"><span class="brand-mark">RP</span><span><span class="eyebrow">RECALL PROTOCOL / SYNTHETIC CONTROL PLANE</span><strong>Moonfire Lantern recall</strong></span></a>
         <div class="status-pill"><span class="pulse"></span><span id="storageMode">checking ledger…</span></div>
       </header>
 
       <section class="hero-grid">
-        <div class="hero-copy"><p class="eyebrow gold">INCIDENT M-17 · HIGH SEVERITY</p><h2>Memory that survives<br /><em>the interruption.</em></h2><p class="lede">Three residents. Three districts. One defective batch. Watch a recall propagate through durable ownership, transactional claims, and a read-only audit trail.</p><div class="hero-actions"><button id="runDemo" class="primary">Run recall sequence <span>↗</span></button><button id="resetDemo" class="ghost">Reset fixture</button></div></div>
-        <div class="signal-card"><div class="signal-top"><span>CONTROL PLANE HEALTH</span><span class="mono">v0.1 / deterministic</span></div><div class="signal-orbit"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="core">M-17</div><span class="node n1">NM</span><span class="node n2">MV</span><span class="node n3">PC</span></div><div class="signal-foot"><span>serializable claims</span><span>·</span><span>replay-safe events</span></div></div>
+        <div class="hero-copy">
+          <p class="eyebrow gold">INCIDENT M-17 · HIGH SEVERITY</p>
+          <h1>Follow the evidence.<br /><em>Recover the work.</em></h1>
+          <p class="lede">A recall is not a list. It is a chain of places, objects, people, and claims. Drag the network, select any node, and see exactly why the ledger connects it.</p>
+          <div class="hero-actions"><button id="runDemo" class="primary">Run recall sequence <span aria-hidden="true">↗</span></button><button id="resetDemo" class="ghost">Reset fixture</button></div>
+          <p class="tip"><span class="tip-key">TRY IT</span> Drag a node · click a node · use the filters · then run the incident.</p>
+        </div>
+        <aside class="hero-note"><span class="eyebrow">THE POINT</span><strong>Every connection answers a question.</strong><span>Where was it? Who held it? Who owns the next action? What happens after a retry or interruption?</span></aside>
       </section>
 
-      <section class="metrics" id="metrics"></section>
-      <section class="content-grid">
-        <div class="panel map-panel"><div class="panel-heading"><div><p class="eyebrow">01 / RELATIONSHIP MAP</p><h3>Where the recall travels</h3></div><span class="live-dot">LIVE LEDGER</span></div><div id="districts" class="districts"></div><div class="legend"><span><i class="dot amber"></i> affected item</span><span><i class="dot mint"></i> claimed task</span><span><i class="dot violet"></i> current holder</span></div></div>
-        <div class="panel agents-panel"><div class="panel-heading"><div><p class="eyebrow">02 / RESIDENT AGENTS</p><h3>Delegated, not detached</h3></div><span class="mini-count" id="agentCount">3 online</span></div><div id="agents" class="agents"></div></div>
+      <section class="metrics" id="metrics" aria-label="Recall metrics"></section>
+
+      <section class="workspace panel">
+        <div class="panel-heading workspace-heading"><div><p class="eyebrow">01 / INTERACTIVE RECALL NETWORK</p><h2>See the incident move through the world</h2></div><span class="live-dot"><i></i> LIVE LEDGER</span></div>
+        <div class="graph-toolbar"><div class="filter-group" role="group" aria-label="Filter network"><span class="toolbar-label">SHOW</span><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="affected">Affected</button><button class="filter" data-filter="unresolved">Unresolved</button><button class="filter" data-filter="claimed">Claimed</button><button class="filter" data-filter="conflicts">Conflicts</button></div><button id="resetLayout" class="text-button">Reset layout ↺</button></div>
+        <div class="network-layout">
+          <div class="network-stage" id="networkStage"><svg id="network" viewBox="0 0 900 560" role="application" aria-label="Draggable recall relationship network"></svg><div id="runStatus" class="run-status" aria-live="polite">Select a node to inspect it.</div></div>
+          <aside class="inspector" id="inspector" aria-live="polite"><div class="inspector-empty"><span class="inspector-icon">⌁</span><strong>Pick a node</strong><span>The inspector will explain what it is, where it sits, and why it is connected.</span></div></aside>
+        </div>
+        <div class="legend"><span><i class="legend-dot incident"></i> incident</span><span><i class="legend-dot district"></i> district</span><span><i class="legend-dot object"></i> affected object</span><span><i class="legend-dot resident"></i> resident</span><span><i class="legend-dot task"></i> claim / task</span><span class="legend-help">drag nodes to test the evidence map</span></div>
       </section>
-      <section class="content-grid lower"><div class="panel ledger-panel"><div class="panel-heading"><div><p class="eyebrow">03 / DURABLE EVENT LEDGER</p><h3>Every change has a receipt</h3></div><button id="auditBtn" class="text-button">Read-only audit ↗</button></div><div id="events" class="events"></div></div><div class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">04 / MCP AUDIT</p><h3>Ask the ledger</h3></div><span class="lock">⌁ READ ONLY</span></div><p class="audit-question">Which M-17 lanterns remain in circulation, who has them, and why?</p><button id="mcpBtn" class="secondary">Query recall.audit</button><pre id="mcpResult" class="mcp-result">Awaiting a signed read-only query…</pre></div></section>
+
+      <section class="content-grid lower">
+        <div class="panel ledger-panel"><div class="panel-heading"><div><p class="eyebrow">02 / DURABLE EVENT LEDGER</p><h2>Every change has a receipt</h2></div><button id="auditBtn" class="text-button">Read-only audit ↗</button></div><div id="events" class="events"></div></div>
+        <div class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">03 / MCP AUDIT</p><h2>Ask the ledger</h2></div><span class="lock">⌁ READ ONLY</span></div><p class="audit-question">Which affected items remain in circulation, who has them, and why?</p><button id="mcpBtn" class="secondary">Query recall.audit</button><pre id="mcpResult" class="mcp-result">Awaiting a signed read-only query…</pre></div>
+      </section>
       <footer><span>RECALL PROTOCOL</span><span>synthetic data · no resident or production records · CockroachDB-ready</span><a href="https://github.com/rishvaiyer/recall-protocol" target="_blank" rel="noreferrer">source ↗</a></footer>
-    </main><script type="module" src="/app.js"></script>
+    </main>
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
