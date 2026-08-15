@@ -1,4 +1,4 @@
-import { createGraphModel, getNodeDetail, nodeMatchesFilter } from '/graph-model.js';
+import { clampPosition, createGraphModel, getNodeDetail, nodeMatchesFilter, nudgePosition } from '/graph-model.js';
 
 const $ = (selector) => document.querySelector(selector);
 const svg = $('#network');
@@ -9,6 +9,7 @@ let selectedId = null;
 let activeNode = null;
 let activeEdge = null;
 let dragging = null;
+let suppressClick = false;
 let sequenceToken = 0;
 const positions = JSON.parse(localStorage.getItem('recall-network-positions') || '{}');
 
@@ -46,18 +47,36 @@ function renderGraph() {
   }).join('');
   svg.innerHTML = `<g class="edges">${edgeMarkup}</g><g class="nodes">${nodeMarkup}</g>`;
   svg.querySelectorAll('.graph-node').forEach((element) => {
-    element.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectedId = element.dataset.nodeId; renderGraph(); renderInspector(); } });
-    element.addEventListener('pointerdown', (event) => { selectedId = element.dataset.nodeId; renderInspector(); startDrag(event, element); });
+    element.addEventListener('keydown', (event) => handleNodeKeydown(event, element.dataset.nodeId));
   });
 }
 
+function selectNode(nodeId) { selectedId = nodeId; renderInspector(); }
+
 svg.addEventListener('click', (event) => {
   const element = event.target.closest?.('.graph-node');
-  if (!element || dragging?.moved) return;
-  selectedId = element.dataset.nodeId;
+  if (!element || suppressClick) { suppressClick = false; return; }
+  selectNode(element.dataset.nodeId);
   renderGraph();
   renderInspector();
 });
+
+svg.addEventListener('pointerdown', (event) => {
+  const element = event.target.closest?.('.graph-node');
+  if (!element || event.button !== 0) return;
+  const node = nodeById(element.dataset.nodeId);
+  if (!node) return;
+  selectNode(node.id);
+  const start = svgPoint(event);
+  const origin = position(node);
+  dragging = { id: node.id, dx: origin.x - start.x, dy: origin.y - start.y, moved: false, pointerId: event.pointerId };
+  svg.setPointerCapture?.(event.pointerId);
+  event.preventDefault();
+});
+
+svg.addEventListener('pointermove', moveDrag);
+svg.addEventListener('pointerup', endDrag);
+svg.addEventListener('pointercancel', endDrag);
 
 function renderInspector() {
   const node = selectedId ? nodeById(selectedId) : null;
@@ -78,9 +97,27 @@ function render() { $('#storageMode').textContent = snapshot.storageMode; render
 async function load(path, options) { const response = await fetch(path, options); if (!response.ok) throw new Error(await response.text()); return response.json(); }
 async function refresh() { snapshot = await load('/api/state'); render(); }
 function svgPoint(event) { const rect = svg.getBoundingClientRect(); return { x: (event.clientX - rect.left) * (900 / rect.width), y: (event.clientY - rect.top) * (560 / rect.height) }; }
-function startDrag(event, element) { const node = nodeById(element.dataset.nodeId); if (!node) return; const start = svgPoint(event); const origin = position(node); dragging = { id: node.id, dx: origin.x - start.x, dy: origin.y - start.y, moved: false }; element.setPointerCapture?.(event.pointerId); element.addEventListener('pointermove', moveDrag); element.addEventListener('pointerup', endDrag, { once: true }); element.addEventListener('pointercancel', endDrag, { once: true }); }
-function moveDrag(event) { if (!dragging) return; const node = nodeById(dragging.id); const point = svgPoint(event); const next = { x: Math.max(70, Math.min(830, point.x + dragging.dx)), y: Math.max(60, Math.min(500, point.y + dragging.dy)) }; if (Math.abs(next.x - position(node).x) + Math.abs(next.y - position(node).y) > 2) dragging.moved = true; positions[node.id] = next; const element = svg.querySelector(`[data-node-id="${CSS.escape(node.id)}"]`); element?.setAttribute('transform', `translate(${next.x} ${next.y})`); renderGraphEdgesOnly(); }
-function endDrag() { if (!dragging) return; localStorage.setItem('recall-network-positions', JSON.stringify(positions)); setTimeout(() => { dragging = null; }, 0); }
+function moveDrag(event) {
+  if (!dragging || event.pointerId !== dragging.pointerId) return;
+  const node = nodeById(dragging.id); const point = svgPoint(event); const next = clampPosition({ x: point.x + dragging.dx, y: point.y + dragging.dy });
+  if (Math.abs(next.x - position(node).x) + Math.abs(next.y - position(node).y) > 2) dragging.moved = true;
+  positions[node.id] = next;
+  const element = svg.querySelector(`[data-node-id="${CSS.escape(node.id)}"]`); element?.setAttribute('transform', `translate(${next.x} ${next.y})`); renderGraphEdgesOnly();
+}
+function endDrag(event) {
+  if (!dragging || (event.pointerId != null && event.pointerId !== dragging.pointerId)) return;
+  suppressClick = dragging.moved;
+  localStorage.setItem('recall-network-positions', JSON.stringify(positions));
+  svg.releasePointerCapture?.(dragging.pointerId);
+  dragging = null;
+  setTimeout(() => { suppressClick = false; }, 0);
+}
+function handleNodeKeydown(event, nodeId) {
+  if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectNode(nodeId); renderGraph(); renderInspector(); return; }
+  const deltas = { ArrowUp: [0, -12], ArrowDown: [0, 12], ArrowLeft: [-12, 0], ArrowRight: [12, 0] };
+  const delta = deltas[event.key]; if (!delta) return;
+  event.preventDefault(); selectedId = nodeId; const node = nodeById(nodeId); positions[nodeId] = nudgePosition(position(node), ...delta); localStorage.setItem('recall-network-positions', JSON.stringify(positions)); renderGraph(); renderInspector(); svg.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`)?.focus();
+}
 function renderGraphEdgesOnly() { const model = graph(); model.edges.forEach((edge) => { const source = position(nodeById(edge.source)); const target = position(nodeById(edge.target)); const path = svg.querySelector(`[data-edge-id="${CSS.escape(edge.id)}"]`); if (path) path.setAttribute('d', edgePath(source, target)); const label = path?.nextElementSibling; if (label) { label.setAttribute('x', (source.x + target.x) / 2); label.setAttribute('y', (source.y + target.y) / 2 - 5); } }); }
 function delay(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 async function runSequence() {

@@ -4,6 +4,14 @@ export const TASKS = [
   { id: 'task-retrieve-03', taskId: 'retrieve:lantern-m17-03', objectId: 'lantern-m17-03', label: 'Retrieve M-17 / 03', action: 'retrieve', ownerHint: 'Pirate Cove' }
 ];
 
+export const GRAPH_BOUNDS = { minX: 70, maxX: 830, minY: 60, maxY: 500 };
+export function clampPosition(point) {
+  return { x: Math.max(GRAPH_BOUNDS.minX, Math.min(GRAPH_BOUNDS.maxX, point.x)), y: Math.max(GRAPH_BOUNDS.minY, Math.min(GRAPH_BOUNDS.maxY, point.y)) };
+}
+export function nudgePosition(point, dx, dy) {
+  return clampPosition({ x: point.x + dx, y: point.y + dy });
+}
+
 const districtIds = ['district-night-market', 'district-medieval-village', 'district-pirate-cove'];
 const affectedIds = (snapshot) => new Set(snapshot.related.map((item) => item.objectId));
 const claimsFor = (snapshot, objectId) => snapshot.claims.filter((claim) => claim.objectId === objectId);
