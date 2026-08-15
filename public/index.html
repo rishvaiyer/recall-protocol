@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recall Protocol — living incident memory</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">↗</span><div><p class="eyebrow">RECALL PROTOCOL / SYNTHETIC CONTROL PLANE</p><h1>Moonfire Lantern recall</h1></div></div>
+        <div class="status-pill"><span class="pulse"></span><span id="storageMode">checking ledger…</span></div>
+      </header>
+
+      <section class="hero-grid">
+        <div class="hero-copy"><p class="eyebrow gold">INCIDENT M-17 · HIGH SEVERITY</p><h2>Memory that survives<br /><em>the interruption.</em></h2><p class="lede">Three residents. Three districts. One defective batch. Watch a recall propagate through durable ownership, transactional claims, and a read-only audit trail.</p><div class="hero-actions"><button id="runDemo" class="primary">Run recall sequence <span>↗</span></button><button id="resetDemo" class="ghost">Reset fixture</button></div></div>
+        <div class="signal-card"><div class="signal-top"><span>CONTROL PLANE HEALTH</span><span class="mono">v0.1 / deterministic</span></div><div class="signal-orbit"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="core">M-17</div><span class="node n1">NM</span><span class="node n2">MV</span><span class="node n3">PC</span></div><div class="signal-foot"><span>serializable claims</span><span>·</span><span>replay-safe events</span></div></div>
+      </section>
+
+      <section class="metrics" id="metrics"></section>
+      <section class="content-grid">
+        <div class="panel map-panel"><div class="panel-heading"><div><p class="eyebrow">01 / RELATIONSHIP MAP</p><h3>Where the recall travels</h3></div><span class="live-dot">LIVE LEDGER</span></div><div id="districts" class="districts"></div><div class="legend"><span><i class="dot amber"></i> affected item</span><span><i class="dot mint"></i> claimed task</span><span><i class="dot violet"></i> current holder</span></div></div>
+        <div class="panel agents-panel"><div class="panel-heading"><div><p class="eyebrow">02 / RESIDENT AGENTS</p><h3>Delegated, not detached</h3></div><span class="mini-count" id="agentCount">3 online</span></div><div id="agents" class="agents"></div></div>
+      </section>
+      <section class="content-grid lower"><div class="panel ledger-panel"><div class="panel-heading"><div><p class="eyebrow">03 / DURABLE EVENT LEDGER</p><h3>Every change has a receipt</h3></div><button id="auditBtn" class="text-button">Read-only audit ↗</button></div><div id="events" class="events"></div></div><div class="panel audit-panel"><div class="panel-heading"><div><p class="eyebrow">04 / MCP AUDIT</p><h3>Ask the ledger</h3></div><span class="lock">⌁ READ ONLY</span></div><p class="audit-question">Which M-17 lanterns remain in circulation, who has them, and why?</p><button id="mcpBtn" class="secondary">Query recall.audit</button><pre id="mcpResult" class="mcp-result">Awaiting a signed read-only query…</pre></div></section>
+      <footer><span>RECALL PROTOCOL</span><span>synthetic data · no resident or production records · CockroachDB-ready</span><a href="https://github.com/rishvaiyer/recall-protocol" target="_blank" rel="noreferrer">source ↗</a></footer>
+    </main><script type="module" src="/app.js"></script>
+  </body>
+</html>

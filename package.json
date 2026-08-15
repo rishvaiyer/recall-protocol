@@ -1,0 +1,14 @@
+{
+  "name": "recall-protocol",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Synthetic multi-agent incident recall demo with deterministic durable memory semantics.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js",
+    "smoke": "node scripts/smoke.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": { "pg": "^8.13.1" }
+}
