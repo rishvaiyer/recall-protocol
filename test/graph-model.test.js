@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createStore } from '../src/store.js';
-import { createGraphModel, getNodeDetail, nodeMatchesFilter } from '../public/graph-model.js';
+import { clampPosition, createGraphModel, getNodeDetail, nodeMatchesFilter, nudgePosition } from '../public/graph-model.js';
+
+test('graph positions stay inside the touch-safe canvas and keyboard nudges are bounded', () => {
+  assert.deepEqual(clampPosition({ x: -20, y: 999 }), { x: 70, y: 500 });
+  assert.deepEqual(nudgePosition({ x: 830, y: 60 }, 12, -12), { x: 830, y: 60 });
+  assert.deepEqual(nudgePosition({ x: 220, y: 205 }, 12, 0), { x: 232, y: 205 });
+});
 
 test('graph model keeps the incident, M-17 objects, tasks, and labeled links visible before recall runs', () => {
   const snapshot = createStore().snapshot();
