@@ -2,7 +2,7 @@
 
 ## Data boundary
 
-All names, districts, objects, holders, and incident details are synthetic. Do not put personal, production Thirdwurld, customer, or real recall data into this repository or demo.
+All names, districts, objects, holders, and incident details are synthetic. Do not put personal, production, customer, or real incident data into this repository or demo.
 
 ## Safe defaults
 
