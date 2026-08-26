@@ -47,4 +47,4 @@ The app is designed for a free/dev Railway service. Set `PORT` only for the synt
 
 ## Boundaries
 
-This is a hackathon/demo slice, not a safety system. It does not contact residents, send notices, operate a real recall, provide legal/medical advice, or claim exactly-once distributed execution. See [SECURITY.md](SECURITY.md), [THREAT_MODEL.md](THREAT_MODEL.md), and [HANDOFF.md](HANDOFF.md).
+This is a hackathon/demo slice, not a safety system. It does not contact residents, send notices, operate a real recall, provide legal/medical advice, or claim exactly-once distributed execution. See [SECURITY.md](SECURITY.md).
