@@ -1,0 +1,31 @@
+{
+  "project": "Recall Protocol",
+  "category": "Multi-agent incident memory and recovery",
+  "one_liner": "A synthetic multi-agent incident-memory demo with durable event ownership, idempotent claims, replay safety, and interruption recovery.",
+  "hook": "Agents forget. Incidents do not. Recall Protocol gives the work a durable event trail and deterministic recovery path.",
+  "safe_demo_scenes": [
+    "Run the recall sequence and show the incident ledger populate.",
+    "Show an idempotent retry and claim conflict resolving without duplicate work.",
+    "Show an interrupted task recover from its saved checkpoint."
+  ],
+  "verification_commands": [
+    "npm test",
+    "npm run smoke"
+  ],
+  "allowed_claims": [
+    "The demo includes idempotency-key replay without duplicate work.",
+    "The demo includes interruption recovery from a saved checkpoint.",
+    "Local fallback is clearly labeled when no CockroachDB cluster secret is present."
+  ],
+  "forbidden_claims": [
+    "Guarantees exactly-once distributed execution.",
+    "Is a production safety system.",
+    "Contacts real residents or operates a real recall."
+  ],
+  "privacy": [
+    "Use only the bundled synthetic Moonfire Lantern scenario.",
+    "Never insert real incident or resident data for the showcase."
+  ],
+  "tone": "cinematic reliability demo",
+  "preferred_duration_seconds": 21
+}\n
